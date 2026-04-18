@@ -1,0 +1,3 @@
+auth_request /_auth;
+auth_request_set $deps_token $upstream_http_deps_token;
+proxy_set_header DEPS-TOKEN $deps_token;

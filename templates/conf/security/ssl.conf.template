@@ -1,0 +1,4 @@
+ssl_certificate     "data:${NGINX_SSL_CERT}";
+ssl_certificate_key "data:${NGINX_SSL_CERT_KEY}";
+
+error_page 497 https://$http_host$request_uri;

@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap
+  labels:
+    {{- include "deps-nginx.labels" . | nindent 4 }}
+data:
+  NGINX_PORT: {{ .Values.nginx_settings.NGINX_PORT | quote }}
+  NGINX_UNSECURE_PORT: {{ .Values.nginx_settings.NGINX_UNSECURE_PORT | quote }}
+  NGINX_WORKERS: {{ .Values.nginx_settings.NGINX_WORKERS | quote }}
+  NGINX_CONNECTIONS: {{ .Values.nginx_settings.NGINX_CONNECTIONS | quote }}
+  NGINX_CORS_ALLOW_ORIGIN: '{{ .Values.nginx_settings.NGINX_CORS_ALLOW_ORIGIN }}'
+  NGINX_SSL: '{{ .Values.nginx_settings.NGINX_SSL }}'
+  UPSTREAM_FRONTEND_URL: '{{ .Values.nginx_settings.UPSTREAM_FRONTEND_URL }}'
+  UPSTREAM_BACKEND_URL: '{{ .Values.nginx_settings.UPSTREAM_BACKEND_URL }}'
+  UPSTREAM_CORLEONE_URL: '{{ .Values.nginx_settings.UPSTREAM_CORLEONE_URL }}'
+  UPSTREAM_OCR_URL: '{{ .Values.nginx_settings.UPSTREAM_OCR_URL }}'
+  UPSTREAM_OMR_URL: '{{ .Values.nginx_settings.UPSTREAM_OMR_URL }}'
+  UPSTREAM_TABLES_URL: '{{ .Values.nginx_settings.UPSTREAM_TABLES_URL }}'
+  UPSTREAM_STORAGE_URL: '{{ .Values.nginx_settings.UPSTREAM_STORAGE_URL }}'
+  UPSTREAM_PLAYGROUND_URL: '{{ .Values.nginx_settings.UPSTREAM_PLAYGROUND_URL }}'
+  UPSTREAM_COMPARISON_URL: '{{ .Values.nginx_settings.UPSTREAM_COMPARISON_URL }}'
+  UPSTREAM_CONTRACTS_URL: '{{ .Values.nginx_settings.UPSTREAM_CONTRACTS_URL }}'
+  UPSTREAM_VALIDATION_URL: '{{ .Values.nginx_settings.UPSTREAM_VALIDATION_URL }}'
+  UPSTREAM_IMAGE_PREPROCESS_URL: '{{ .Values.nginx_settings.UPSTREAM_IMAGE_PREPROCESS_URL }}'
+  UPSTREAM_PREPROCESS_URL: '{{ .Values.nginx_settings.UPSTREAM_PREPROCESS_URL }}'
+  UPSTREAM_PARSED_DATA_URL: '{{ .Values.nginx_settings.UPSTREAM_PARSED_DATA_URL }}'
+  UPSTREAM_NAMED_ENTITY_RECOGNITION_URL: '{{ .Values.nginx_settings.UPSTREAM_NAMED_ENTITY_RECOGNITION_URL }}'
+  UPSTREAM_PRESALES_URL: '{{ .Values.nginx_settings.UPSTREAM_PRESALES_URL }}'
+  UPSTREAM_UNIFIER_URL: '{{ .Values.nginx_settings.UPSTREAM_UNIFIER_URL }}'
+  UPSTREAM_DOCUMENT_TYPE_URL: '{{ .Values.nginx_settings.UPSTREAM_DOCUMENT_TYPE_URL }}'
+  UPSTREAM_TEMPLATE_URL: '{{ .Values.nginx_settings.UPSTREAM_TEMPLATE_URL }}'
+  UPSTREAM_EXTRACTION_URL: '{{ .Values.nginx_settings.UPSTREAM_EXTRACTION_URL }}'
+  UPSTREAM_WORKFLOW_MANAGER_URL: '{{ .Values.nginx_settings.UPSTREAM_WORKFLOW_MANAGER_URL }}'
+  UPSTREAM_API_GATEWAY_URL: '{{ .Values.nginx_settings.UPSTREAM_API_GATEWAY_URL }}'
+  UPSTREAM_RESULT_EXPORTING_URL: '{{ .Values.nginx_settings.UPSTREAM_RESULT_EXPORTING_URL }}'
+  UPSTREAM_PARSING_URL: '{{ .Values.nginx_settings.UPSTREAM_PARSING_URL }}'
+  UPSTREAM_OUTPUT_EXPORTING_URL: '{{ .Values.nginx_settings.UPSTREAM_OUTPUT_EXPORTING_URL }}'
+  UPSTREAM_PROTOTYPE_URL: '{{ .Values.nginx_settings.UPSTREAM_PROTOTYPE_URL }}'
+  UPSTREAM_PROMPTER_URL: '{{ .Values.nginx_settings.UPSTREAM_PROMPTER_URL }}'
+  UPSTREAM_ENRICHMENT_URL: '{{ .Values.nginx_settings.UPSTREAM_ENRICHMENT_URL }}'
+  UPSTREAM_HIGH_SPARROW_URL: '{{ .Values.nginx_settings.UPSTREAM_HIGH_SPARROW_URL }}'
+  UPSTREAM_AI_FUSION_URL: '{{ .Values.nginx_settings.UPSTREAM_AI_FUSION_URL }}'
+  UPSTREAM_CLOUD_NATIVE_EXTRACTION_URL: '{{ .Values.nginx_settings.UPSTREAM_CLOUD_NATIVE_EXTRACTION_URL }}'
+  UPSTREAM_GROUPS_URL: '{{ .Values.nginx_settings.UPSTREAM_GROUPS_URL }}'
+  UPSTREAM_CLASSIFICATION_URL: '{{ .Values.nginx_settings.UPSTREAM_CLASSIFICATION_URL }}'
+  UPSTREAM_FILE_URL: '{{ .Values.nginx_settings.UPSTREAM_FILE_URL }}'
+  UPSTREAM_FILES_BATCH_URL: '{{ .Values.nginx_settings.UPSTREAM_FILES_BATCH_URL }}'
+  UPSTREAM_EVENT_RELAY_URL: '{{ .Values.nginx_settings.UPSTREAM_EVENT_RELAY_URL }}'
+  UPSTREAM_AGENTIC_AI_URL: '{{ .Values.nginx_settings.UPSTREAM_AGENTIC_AI_URL }}'
+  DNS_RESOLVER_URL: '{{ .Values.nginx_settings.DNS_RESOLVER_URL }}'
+  AUTHORIZATION_ENABLED: '{{ .Values.nginx_settings.AUTHORIZATION_ENABLED }}'
+  API_KEY_AUTH: '{{ .Values.nginx_settings.API_KEY_AUTH }}'
+  UPSTREAM_AUTHORIZATION_URL: '{{ .Values.nginx_settings.UPSTREAM_AUTHORIZATION_URL }}'
+  AUTHORIZATION_URI: '{{ .Values.nginx_settings.AUTHORIZATION_URI }}'
+  CSP_ACTIVE: {{ .Values.nginx_settings.CSP_ACTIVE | quote }}
+  MODSECURITY: '{{ .Values.nginx_settings.MODSECURITY }}'
+  CLIENT_MAX_BODY_SIZE: '{{ .Values.nginx_settings.CLIENT_MAX_BODY_SIZE }}'
+  PROXY_READ_TIMEOUT: '{{ .Values.nginx_settings.PROXY_READ_TIMEOUT}}'
+  PROXY_SEND_TIMEOUT: '{{ .Values.nginx_settings.PROXY_SEND_TIMEOUT}}'
+  UWSGI_READ_TIMEOUT: '{{ .Values.nginx_settings.UWSGI_READ_TIMEOUT}}'
+  UWSGI_SEND_TIMEOUT: '{{ .Values.nginx_settings.UWSGI_SEND_TIMEOUT}}'
+  STORAGE_PROXY_BUFFERING: '{{ .Values.nginx_settings.STORAGE_PROXY_BUFFERING}}'

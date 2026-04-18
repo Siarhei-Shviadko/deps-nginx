@@ -1,0 +1,18 @@
+{{- if .Values.service.nodeport.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport
+  labels:
+    {{- include "deps-nginx.labels" . | nindent 4 }}
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.service.nodeport.servicePort }}
+      targetPort: {{ .Values.service.nodeport.targetPort }}
+      protocol: TCP
+      name: http
+      nodePort: {{ .Values.service.nodeport.port }}
+  selector:
+    {{- include "deps-nginx.selectorLabels" . | nindent 4 }}
+{{- end }}

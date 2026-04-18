@@ -1,0 +1,5 @@
+limit_req       zone=depslimitreq burst=500;
+limit_req_zone  $binary_remote_addr zone=depslimitreq:10m rate=100r/s;
+limit_conn      depslimitconn 300;
+limit_conn_zone $binary_remote_addr zone=depslimitconn:100m;
+limit_req_zone  $binary_remote_addr zone=authlimit:10m rate=200r/s;

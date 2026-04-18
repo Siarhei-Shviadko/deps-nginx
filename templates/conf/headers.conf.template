@@ -1,0 +1,20 @@
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+
+# config to don't allow the browser to render the page inside an frame or iframe
+# and avoid clickjacking (may be considered obsolete with CSP's frame-ancestors 'none')
+add_header X-Frame-Options DENY always;
+
+# This header enables the Cross-site scripting (XSS) filter
+# built into most recent web browsers.
+add_header X-XSS-Protection '1; mode=block';
+add_header X-Content-Type-Options nosniff;
+add_header X-Permitted-Cross-Domain-Policies none;
+add_header Referrer-Policy same-origin;
+
+# This header enables Content Security Policy.
+map $CSP_ACTIVE $csp {
+    '1'        "style-src 'self' ${CSP_PERMITTED_ORIGIN} 'unsafe-inline'; script-src ${CSP_PERMITTED_ORIGIN}; img-src 'self' ${CSP_PERMITTED_ORIGIN} data: blob: cid:; font-src 'self' ${CSP_PERMITTED_ORIGIN} data:; connect-src 'self' ${CSP_PERMITTED_ORIGIN} blob:; frame-ancestors 'none'; frame-src ${CSP_PERMITTED_ORIGIN}; worker-src 'self' ${CSP_PERMITTED_ORIGIN}; base-uri 'none'; object-src 'none'; default-src 'self';";
+    default  '';
+}
+add_header Content-Security-Policy "${csp}";
+

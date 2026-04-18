@@ -1,0 +1,11 @@
+{{- if .Values.ingress.comparison }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: frontend-comparison
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - /comparison
+{{ end }}

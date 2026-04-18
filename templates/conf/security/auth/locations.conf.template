@@ -1,0 +1,18 @@
+resolver $DNS_RESOLVER_URL ipv6=off valid=30s;
+
+set $authorize_upstream  "${UPSTREAM_AUTHORIZATION_URL}";
+set $authorize_uri       "${AUTHORIZATION_URI}";
+set $auth_enabled        "${AUTH_ENABLED}";
+
+location / {
+    js_content http.authorize;
+}
+
+location /_authorize {
+    internal;
+    proxy_pass ${authorize_upstream}${authorize_uri};
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header X-Original-URI $request_uri;
+    proxy_intercept_errors on;
+}

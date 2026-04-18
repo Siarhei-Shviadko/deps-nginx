@@ -1,0 +1,34 @@
+# contains configuration for "http"
+include       /etc/nginx/mime.types;
+default_type  application/octet-stream;
+
+sendfile    on;
+tcp_nopush  on;
+tcp_nodelay on;
+
+keepalive_timeout    10;
+send_timeout         10;
+types_hash_max_size  2048;
+server_tokens        off;
+client_max_body_size ${CLIENT_MAX_BODY_SIZE};
+
+proxy_read_timeout ${PROXY_READ_TIMEOUT}s;
+proxy_send_timeout ${PROXY_SEND_TIMEOUT}s;
+uwsgi_read_timeout ${UWSGI_READ_TIMEOUT}s;
+uwsgi_send_timeout ${UWSGI_SEND_TIMEOUT}s;
+
+gzip            on;
+gzip_disable    "msie6";
+gzip_comp_level 6;
+gzip_types      text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+gzip_proxied    any;
+
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+map $http_origin $cors_allowed {
+    default 0;
+    ${NGINX_CORS_ALLOW_ORIGIN} 1;
+}

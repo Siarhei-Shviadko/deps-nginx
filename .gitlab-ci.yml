@@ -1,0 +1,85 @@
+include:
+  - project: 'epm-deps/deps-pipelines'
+    ref: 0.8.6
+    file: '/shared/python.gitlab-ci.yml'
+
+stages:
+  - build
+  - tests
+  - deploy
+
+helmlint:
+  script:
+    - helm lint .helm/services
+    - helm template $CI_PROJECT_NAME .helm/services --output-dir chart
+
+ci:
+  stage: tests
+  needs: ["build"]
+  script:
+    - echo "Done"
+
+manual-deploy-dev-k3s-hu:
+  variables:
+    ADDITIONAL_VALUES: "--set ingress.host=$INGRESS_HOST_DEV --set ingress.tls[0].hosts[0]=$INGRESS_HOST_DEV --set ingress.tls[0].secretName=$INGRESS_TLS \
+    --set ingress.hostlabelingtool=$INGRESS_LABELINGTOOLHOST_DEV --set ingress.tls[1].hosts[0]=$INGRESS_LABELINGTOOLHOST_DEV --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_DEV --set ingress.tls[2].hosts[0]=$INGRESS_FRONTENDCUSTOM_DEV --set ingress.tls[2].secretName=$INGRESS_TLS \
+    --set ingress.frontendlanding=$INGRESS_LANDING_DEV --set ingress.tls[3].hosts[0]=$INGRESS_LANDING_DEV --set ingress.tls[3].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+
+deploy-dev-k3s-hu:
+  variables:
+    ADDITIONAL_VALUES: "--set ingress.host=$INGRESS_HOST_DEV --set ingress.tls[0].hosts[0]=$INGRESS_HOST_DEV --set ingress.tls[0].secretName=$INGRESS_TLS \
+    --set ingress.hostlabelingtool=$INGRESS_LABELINGTOOLHOST_DEV --set ingress.tls[1].hosts[0]=$INGRESS_LABELINGTOOLHOST_DEV --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_DEV --set ingress.tls[2].hosts[0]=$INGRESS_FRONTENDCUSTOM_DEV --set ingress.tls[2].secretName=$INGRESS_TLS \
+    --set ingress.frontendlanding=$INGRESS_LANDING_DEV --set ingress.tls[3].hosts[0]=$INGRESS_LANDING_DEV --set ingress.tls[3].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+
+deploy-qa-k3s-heavy:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.qa.yaml --set ingress.host=$INGRESS_HOST_K3S_QA --set ingress.tls[0].hosts[0]=$INGRESS_HOST_K3S_QA \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_QA --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_QA --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+
+deploy-demo-k3s-hu:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.demo.yaml --set ingress.host=$INGRESS_HOST_DEMO --set ingress.tls[0].hosts[0]=$INGRESS_HOST_DEMO \
+    --set ingress.hostlabelingtool=$INGRESS_LABELINGTOOLHOST_DEMO --set ingress.tls[1].hosts[0]=$INGRESS_LABELINGTOOLHOST_DEMO --set ingress.tls[1].secretName=$INGRESS_TLS_LABELING \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_DEMO --set ingress.tls[2].hosts[0]=$INGRESS_FRONTENDCUSTOM_DEMO --set ingress.tls[2].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+
+deploy-ds-heavy-k3s:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.ds.yaml --set ingress.host=$INGRESS_HOST_DS --set ingress.tls[0].hosts[0]=$INGRESS_HOST_DS \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_DS --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_DS --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+
+deploy-ins-heavy-k3s:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.ins.yaml --set ingress.host=$INGRESS_HOST_INS --set ingress.tls[0].hosts[0]=$INGRESS_HOST_INS \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_INS --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_INS --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.flowable=$INGRESS_FLOWABLE_INS --set ingress.tls[2].hosts[0]=$INGRESS_FLOWABLE_INS --set ingress.tls[2].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+deploy-presale-heavy-k3s:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.presale.yaml --set ingress.host=$INGRESS_HOST_PRESALE --set ingress.tls[0].hosts[0]=$INGRESS_HOST_PRESALE \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_PRESALE --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_PRESALE --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+manual-deploy-staging-k3s:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.staging.yaml --set ingress.host=$INGRESS_HOST_STAGING --set ingress.tls[0].hosts[0]=$INGRESS_HOST_STAGING \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_STAGING --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_STAGING --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"
+
+deploy-other-k3s-hu:
+  variables:
+    ADDITIONAL_VALUES: "--values .helm/values.other.yaml --set ingress.host=$INGRESS_HOST_OTHER --set ingress.tls[0].hosts[0]=$INGRESS_HOST_OTHER \
+    --set ingress.frontendcustomization=$INGRESS_FRONTENDCUSTOM_OTHER --set ingress.tls[1].hosts[0]=$INGRESS_FRONTENDCUSTOM_OTHER --set ingress.tls[1].secretName=$INGRESS_TLS \
+    --set ingress.redirect_to_https=true"

@@ -1,0 +1,88 @@
+{{- if .Values.vault_settings.azure_key_vault }}
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: {{ .Values.csi.csi_default_name }}
+spec:
+  provider: azure
+  secretObjects:
+  - data:
+    - key: tls.crt
+      objectName: tlscrt
+    - key: tls.key
+      objectName: tlskey
+    - key: upstream-auth-url
+      objectName: upstream-auth-url
+    - key: csp-permitted-origin
+      objectName: csp-permitted-origin
+    - key: auth-uri
+      objectName: auth-uri
+    - key: auth-enabled
+      objectName: auth-enabled
+    - key: feature-document-upload
+      objectName: feature-document-upload
+    - key: feature-document-delete
+      objectName: feature-document-delete
+    - key: feature-model-management
+      objectName: feature-model-management
+    - key: feature-document-change-type
+      objectName: feature-document-change-type
+    - key: feature-run-pipeline
+      objectName: feature-run-pipeline   
+    secretName: {{ .Values.secrets.deps_nginx.secretName }}
+    type: Opaque
+  parameters:
+    keyvaultName: {{ .Values.azure_kv_settings.keyvaultName }}
+    tenantId: {{ .Values.azure_kv_settings.tenantId }}
+    vaultKubernetesMountPath: {{ .Values.csi.vaultKubernetesMountPath }}
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: {{ .Values.azure_kv_settings.userAssignedIdentityID }}  
+    resourceGroup:  {{ .Values.azure_kv_settings.resourceGroup }}
+    subscriptionId: {{ .Values.azure_kv_settings.subscriptionId }}
+    objects: |
+      array:
+        - |
+          objectName: "feature-document-upload"
+          objectType: secret
+
+        - |
+          objectName: "feature-document-delete"
+          objectType: secret
+
+        - |
+          objectName: "feature-model-management"
+          objectType: secret
+
+        - |
+          objectName: "feature-document-change-type"
+          objectType: secret
+
+        - |
+          objectName: "feature-run-pipeline"
+          objectType: secret
+
+        - |
+          objectName: "tlscrt"
+          objectType: "secret"
+
+        - |
+          objectName: "tlskey"
+          objectType: "secret"
+
+        - |
+          objectName: "upstream-auth-url"
+          objectType: secret
+
+        - |
+          objectName: "csp-permitted-origin"
+          objectType: secret
+
+        - |
+          objectName: "auth-uri"
+          objectType: secret
+        
+        - |
+          objectName: "auth-enabled"
+          objectType: secret
+{{- end }}

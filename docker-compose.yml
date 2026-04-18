@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./etc/Dockerfile
+      args:
+        REPOSITORY_URL: "${REPOSITORY_URL}"
+    container_name: deps-nginx
+    env_file:
+      - ./etc/.dev.env
+      - .env
+    restart: 'no'
+    external_links:
+      - deps_file_storage:file-storage
+      - deps_file_storage_nginx:file-storage-nginx
+      - deps-backend_app_1:backend
+      - deps-ocr_ocr_1:ocr
+      - deps-tables_tables_1:tables
+    networks:
+      - deps-network
+    ports:
+      - 8000:8080
+    volumes:
+#      - ./templates:/etc/nginx/templates
+      - ./scripts:/etc/nginx/scripts
+
+networks:
+  deps-network:
+    external:
+      name: deps-network

@@ -1,0 +1,2 @@
+modsecurity ${MODSECURITY};
+modsecurity_rules_file /etc/nginx/modsecurity/setup.conf;

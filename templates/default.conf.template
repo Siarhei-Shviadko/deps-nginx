@@ -1,0 +1,84 @@
+pid  /var/run/nginx.pid;
+
+worker_processes ${NGINX_WORKERS};
+
+load_module modules/ngx_http_js_module.so;
+load_module modules/ngx_http_modsecurity_module.so;
+
+events {
+    worker_connections ${NGINX_CONNECTIONS};
+}
+
+http {
+    access_log /dev/stdout;
+    error_log  /dev/stderr warn;
+
+    include conf.d/conf/http.conf;
+    include conf.d/conf/headers.conf;
+    include conf.d/conf/security/limits.conf;
+
+    js_import scripts/http.js;
+    js_import scripts/locations.js;
+
+    js_set $auth_server http.select_auth_server;
+    js_set $document_api_server locations.get_document_api_path;
+    js_set $corleone_api_server locations.get_corleone_api_path;
+    
+    map $request_method $limit_key {
+      default "";
+      DELETE $binary_remote_addr;
+     
+    }
+ 
+    limit_req_zone $limit_key zone=req_zone:20m rate=100r/s;
+    limit_conn_zone $binary_remote_addr zone=sse_conn_zone:10m;
+    limit_req_status 429;
+    limit_req_log_level warn;
+    client_body_timeout 10; 
+    client_header_timeout 10;
+
+    server {
+        listen ${NGINX_PORT} default_server ${NGINX_SSL};
+
+        include conf.d/conf/security/ssl.conf;
+        include conf.d/conf/locations.conf;
+        include conf.d/conf/proxy.conf;
+        include conf.d/conf/modsecurity.conf;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers ALL:!EXP:!NULL:!ADH:!LOW:!SSLv2:!SSLv3:!MD5:!RC4;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+        ssl_stapling on; 
+        ssl_stapling_verify on;
+        ssl_session_tickets off;
+        
+
+    }
+
+    server {
+        listen ${NGINX_UNSECURE_PORT} default_server;
+
+        include conf.d/conf/locations.conf;
+        include conf.d/conf/proxy.conf;
+        include conf.d/conf/modsecurity.conf;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+        ssl_stapling on; 
+        ssl_stapling_verify on;
+        ssl_session_tickets off;
+    }
+
+    server {
+        listen 8001;
+
+        include conf.d/conf/security/auth/locations.conf;
+        include conf.d/conf/modsecurity.conf;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+        ssl_stapling on; 
+        ssl_stapling_verify on;
+        ssl_session_tickets off;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers ALL:!EXP:!NULL:!ADH:!LOW:!SSLv2:!SSLv3:!MD5:!RC4;
+    }
+
+}

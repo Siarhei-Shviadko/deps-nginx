@@ -1,0 +1,403 @@
+resolver $DNS_RESOLVER_URL ipv6=off valid=30s;
+
+set $frontend_upstream      "${UPSTREAM_FRONTEND_URL}";
+set $ocr_upstream           "${UPSTREAM_OCR_URL}";
+set $omr_upstream           "${UPSTREAM_OMR_URL}";
+set $tables_upstream        "${UPSTREAM_TABLES_URL}";
+set $storage_upstream       "${UPSTREAM_STORAGE_URL}";
+set $playground_upstream    "${UPSTREAM_PLAYGROUND_URL}";
+set $comparison_upstream    "${UPSTREAM_COMPARISON_URL}";
+set $validation_upstream    "${UPSTREAM_VALIDATION_URL}";
+set $preprocess_upstream    "${UPSTREAM_PREPROCESS_URL}";
+set $image_preprocess_upstream  "${UPSTREAM_IMAGE_PREPROCESS_URL}";
+set $parsed_data_upstream  "${UPSTREAM_PARSED_DATA_URL}";
+set $named_entity_recognition_upstream  "${UPSTREAM_NAMED_ENTITY_RECOGNITION_URL}";
+set $presales_upstream  "${UPSTREAM_PRESALES_URL}";
+set $unifier_upstream  "${UPSTREAM_UNIFIER_URL}";
+set $document_type_upstream  "${UPSTREAM_DOCUMENT_TYPE_URL}";
+set $template_upstream  "${UPSTREAM_TEMPLATE_URL}";
+set $extraction_upstream  "${UPSTREAM_EXTRACTION_URL}";
+set $workflow_manager_upstream  "${UPSTREAM_WORKFLOW_MANAGER_URL}";
+set $api_gateway_upstream  "${UPSTREAM_API_GATEWAY_URL}";
+set $api_result_exporting_upstream "${UPSTREAM_RESULT_EXPORTING_URL}";
+set $parsing_upstream "${UPSTREAM_PARSING_URL}";
+set $output_exporting_upstream "${UPSTREAM_OUTPUT_EXPORTING_URL}";
+set $prototype_upstream "${UPSTREAM_PROTOTYPE_URL}";
+set $prompter_upstream "${UPSTREAM_PROMPTER_URL}";
+set $enrichment_upstream "${UPSTREAM_ENRICHMENT_URL}";
+set $high_sparrow_upstream "${UPSTREAM_HIGH_SPARROW_URL}";
+set $ai_fusion_upstream "${UPSTREAM_AI_FUSION_URL}";
+set $cloud_native_extraction_upstream "${UPSTREAM_CLOUD_NATIVE_EXTRACTION_URL}";
+set $groups_upstream "${UPSTREAM_GROUPS_URL}";
+set $classification_upstream "${UPSTREAM_CLASSIFICATION_URL}";
+set $file_upstream "${UPSTREAM_FILE_URL}";
+set $files_batch_upstream "${UPSTREAM_FILES_BATCH_URL}";
+set $event_relay_upstream "${UPSTREAM_EVENT_RELAY_URL}";
+set $agentic_ai_upstream  "${UPSTREAM_AGENTIC_AI_URL}";
+
+# for contracts presale
+set $contracts_upstream     "${UPSTREAM_CONTRACTS_URL}";
+
+set $auth_enabled           "${AUTH_ENABLED}";
+set $authorization_upstream "${UPSTREAM_AUTHORIZATION_URL}";
+
+if ($http_host = "") {
+  return 444;
+}
+
+location / {
+    try_files $uri $uri/ @fallback;
+}
+
+location ~ ^/(assets|scripts|styles)/ {
+    proxy_buffering off;
+    proxy_pass $frontend_upstream;
+}
+
+location @fallback {
+    proxy_buffering off;
+    proxy_pass $frontend_upstream;
+}
+
+location ~ ^/api/v1 {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/v5 {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/v6 {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/deps/(.*) {
+    proxy_pass $api_gateway_upstream/api/api-gateway/$1$is_args$args;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/iam {
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+    proxy_pass $authorization_upstream;
+}
+
+location ~ ^/api/ocr {
+    proxy_pass $ocr_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/omr {
+    proxy_pass $omr_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/tables {
+    proxy_pass $tables_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/storage {
+    proxy_pass $storage_upstream;
+    proxy_buffering ${STORAGE_PROXY_BUFFERING};
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/corleone {
+    limit_req zone=req_zone burst=10 nodelay;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/preprocess {
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/comparison {
+    proxy_pass $comparison_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/contracts {
+    proxy_pass $contracts_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/validation {
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/image-preprocess {
+    proxy_pass $image_preprocess_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/parsed-data {
+    proxy_pass $parsed_data_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/ner {
+    proxy_pass $named_entity_recognition_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/presales {
+    proxy_pass $presales_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/unifier {
+    proxy_pass $unifier_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/document-type {
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/template {
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/extraction {
+    proxy_pass $extraction_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/workflow-manager {
+    proxy_pass $workflow_manager_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/api-gateway {
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/document {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/result-exporting {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_result_exporting_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/parsing {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $parsing_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+location ~ ^/api/output-exporting {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $output_exporting_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/prototype {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $api_gateway_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/prompter {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $prompter_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/enrichment {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $enrichment_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/high-sparrow {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $high_sparrow_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/ai-fusion {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $ai_fusion_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/cloud-native-extraction {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $cloud_native_extraction_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/groups {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $groups_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/classification {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $classification_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+
+location ~ ^/api/file(/|$) {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $file_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/files-batch {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $files_batch_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/event-relay {
+    limit_conn sse_conn_zone 300;
+    limit_conn_status 429;
+
+    proxy_pass $event_relay_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+    proxy_set_header Connection '';
+    proxy_http_version 1.1;
+    chunked_transfer_encoding off;
+    proxy_buffering off;
+    proxy_cache off;
+    proxy_read_timeout 3600s;
+}
+
+location ~ ^/api/agentic-ai {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $agentic_ai_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+# @TODO: brush up it
+location /files {
+    internal;
+    rewrite ^/files(.*) /api/storage/v1/file$1 break;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_hide_header Content-Disposition;
+    add_header Content-Disposition 'attachment; filename="$args"';
+
+    proxy_pass $storage_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+}
+
+location /playground {
+    try_files $uri @proxy_playground;
+}
+
+location @proxy_playground {
+    proxy_read_timeout 300s;
+    # pass some extra stuff to the backend
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-Ip $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    proxy_pass $playground_upstream;
+}
+
+location ~ /playground/api/kernels/ {
+    proxy_set_header      Host $host;
+    # websocket support
+    proxy_http_version    1.1;
+    proxy_set_header      Upgrade $http_upgrade;
+    proxy_set_header      Connection $connection_upgrade;
+    proxy_read_timeout    86400;
+
+    proxy_pass $playground_upstream;
+}
+
+location ~ /playground/terminals/ {
+    proxy_set_header      Host $host;
+    # websocket support
+    proxy_http_version    1.1;
+    proxy_set_header      Upgrade $http_upgrade;
+    proxy_set_header      Connection $connection_upgrade;
+    proxy_read_timeout    86400;
+
+    proxy_pass $playground_upstream;
+}
+
+location /_auth {
+    internal;
+
+    limit_req zone=authlimit burst=500 nodelay;
+
+    if ($auth_enabled = "false") {
+        return 200;
+    }
+
+    if ($request_uri ~ ".*(docs.*|openapi.json)$") {
+        return 200;
+    }
+
+    # kept for backward compatibility, should be configured by `authorization_enabled` variable
+    proxy_pass $auth_server;
+
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+    proxy_set_header X-Original-URI $request_uri;
+
+    error_page 400 =401 /;
+    proxy_intercept_errors on;
+}
