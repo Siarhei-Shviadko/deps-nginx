@@ -34,6 +34,8 @@ set $file_upstream "${UPSTREAM_FILE_URL}";
 set $files_batch_upstream "${UPSTREAM_FILES_BATCH_URL}";
 set $event_relay_upstream "${UPSTREAM_EVENT_RELAY_URL}";
 set $agentic_ai_upstream  "${UPSTREAM_AGENTIC_AI_URL}";
+set $splitting_upstream "${UPSTREAM_SPLITTING_URL}";
+set $ai_splitter_upstream "${UPSTREAM_AI_SPLITTER_URL}";
 
 # for contracts presale
 set $contracts_upstream     "${UPSTREAM_CONTRACTS_URL}";
@@ -324,6 +326,20 @@ location ~ ^/api/event-relay {
 location ~ ^/api/agentic-ai {
     limit_req zone=req_zone burst=28 delay=20;
     proxy_pass $agentic_ai_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/splitting {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $splitting_upstream;
+    include conf.d/conf/security/auth/auth.conf;
+    include conf.d/conf/security/cors.conf;
+}
+
+location ~ ^/api/ai-splitter {
+    limit_req zone=req_zone burst=28 delay=20;
+    proxy_pass $ai_splitter_upstream;
     include conf.d/conf/security/auth/auth.conf;
     include conf.d/conf/security/cors.conf;
 }

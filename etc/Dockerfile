@@ -1,5 +1,5 @@
 ARG REPOSITORY_URL=""
-FROM ${REPOSITORY_URL}/base/nginx:1.20.2
+FROM ${REPOSITORY_URL:+$REPOSITORY_URL/base/}nginx:1.20.2
 
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
